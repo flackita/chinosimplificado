@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chino Master - Mazos & Diccionario</title>
+    <style>
+        :root { 
+            --primary: #3498db; 
+            --success: #2ecc71; 
+            --bg: #121212;
+            --surface: #1e1e1e;
+            --text: #e0e0e0;
+            --border: #333333;
+        }
+
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg); 
+            color: var(--text);
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            min-height: 100vh; 
+        }
+
+        .app-container { 
+            width: 95%; 
+            max-width: 1000px;
+            padding: 20px; 
+            text-align: center; 
+        }
+        
+        .view { display: none; }
+        .view.active { display: block; }
+
+        .menu-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px; 
+            margin-top: 20px; 
+            margin-bottom: 30px;
+        }
+        .grid-unidades { 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 20px;
+        }
+        @media (max-width: 800px) {
+        .grid-unidades { grid-template-columns: 1fr 1fr; }
+        .app-container { max-width: 700px; }
+        }
+        .deck-card { 
+            background: var(--surface); 
+            padding: 20px 10px;
+            border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid var(--border);
+        }
+        .deck-card:hover { 
+            transform: translateY(-3px); 
+            border-color: var(--primary); 
+            background: #252525;
+        }
+        .deck-card h3 { margin: 0; color: var(--text); font-size: 1rem; }
+
+        .unit-group {
+            background: rgba(255,255,255,0.03);
+            padding: 15px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border);
+        }
+
+        .unit-label {
+            text-align: left;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 0 0 10px 5px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title {
+            text-align: left;
+            margin: 30px 0 15px 0;
+            color: var(--text);
+            font-size: 1.2rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 5px;
+        }
+
+        .game-card { 
+            background: var(--surface); 
+            padding: 40px; 
+            border-radius: 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            margin-top: 20px; 
+            border: 1px solid var(--border);
+        }
+
+        h1 { font-size: 4rem; margin: 10px 0; color: #fff; }
+        #pinyin { font-size: 1.2rem; color: var(--primary); height: 1.5rem; visibility: hidden; }
+        #pinyin.show { visibility: visible; }
+
+        input { 
+            width: 100%; 
+            padding: 15px; 
+            font-size: 1.5rem; 
+            background: #2c2c2c;
+            color: white;
+            border: 3px solid var(--border); 
+            border-radius: 15px; 
+            text-align: center; 
+            outline: none; 
+            box-sizing: border-box; 
+        }
+        input:focus { border-color: var(--primary); }
+        input.correct { border-color: var(--success); background: #1b3d2a; }
+
+        .btn-back { margin-top: 20px; background: none; border: none; color: var(--primary); cursor: pointer; font-weight: bold; }
+
+        /* Diccionario Modo Oscuro */
+        #dict-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; border: none; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.4); z-index: 1000; }
+        #dict-panel { 
+            position: fixed; bottom: 100px; right: 30px; width: 320px; 
+            background: var(--surface); 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            display: none; flex-direction: column; z-index: 1000; overflow: hidden; max-height: 70vh;
+            border: 1px solid var(--border);
+        }
+        #dict-panel.open { display: flex; }
+        .dict-header { background: #252525; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; }
+        .dict-body { padding: 15px; overflow-y: auto; color: var(--text); }
+        #dict-input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 10px; box-sizing: border-box; background: #2c2c2c; color: white; }
+        .dict-item { padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .dict-item b { color: var(--primary); }
+
+        /* Modales Modo Oscuro */
+        #modal-limite, #modal-fin { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1500; }
+        .modal-content { background: var(--surface); padding: 35px; border-radius: 20px; width: 300px; text-align: center; border: 1px solid var(--border); color: var(--text); }
+        .btn-action { padding: 12px; border: 2px solid var(--border); border-radius: 10px; cursor: pointer; background: #2c2c2c; color: var(--text); font-weight: bold; transition: 0.2s; }
+        .btn-action:hover { border-color: var(--primary); color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div id="view-menu" class="view active">
+        <h2 class="section-title">Ruta de Aprendizaje</h2>
+        <div class="menu-grid grid-unidades">
+            <div class="deck-card" onclick="empezarJuego('unidad1.json')"><h3>Unidad 1</h3></div>
+            <div class="deck-card" onclick="empezarJuego('unidad2.json')"><h3>Unidad 2</h3></div>
+            <div class="deck-card" onclick="empezarJuego('unidad3.json')"><h3>Unidad 3</h3></div>
+            <div class="deck-card" onclick="empezarJuego('unidad4.json')"><h3>Unidad 4</h3></div>
+        </div>
+
+        <h2 class="section-title">Estudio por Niveles</h2>
+        
+        <div class="unit-group">
+            <p class="unit-label">Unidad 1</p>
+            <div class="menu-grid">
+                <div class="deck-card" onclick="empezarJuego('parte1_u1.json')"><h3>Principiante</h3></div>
+                <div class="deck-card" onclick="empezarJuego('parte2_u1.json')"><h3>Principiante-Intermedio</h3></div>
+            </div>
+        </div>
+
+        <div class="unit-group">
+            <p class="unit-label">Unidad 2</p>
+            <div class="menu-grid">
+                <div class="deck-card" onclick="empezarJuego('u2_principiante.json')"><h3>Principiante</h3></div>
+                <div class="deck-card" onclick="empezarJuego('u2_intermedio.json')"><h3>Intermedio</h3></div>
+                <div class="deck-card" onclick="empezarJuego('u2_avanzado.json')"><h3>Avanzado</h3></div>
+            </div>
+        </div>
+    </div> <div id="view-game" class="view">
+        <button class="btn-back" onclick="irAlMenu()">← Volver al menú</button>
+        <div id="game-status" style="margin-top:10px; color:#95a5a6; font-size:0.8rem;"></div>
+        <div class="game-card">
+            <h1 id="objetivo">---</h1>
+            <div id="pinyin">pinyin</div>
+            <input type="text" id="input" placeholder="Escribe aquí..." autocomplete="off">
+            <p style="font-size: 0.8rem; color: #ccc; margin-top: 20px;">Espacio para Pista</p>
+        </div>
+    </div>
+
+    <div id="modal-limite">
+        <div class="modal-content">
+            <h3 id="titulo-mazo-modal">Mazo</h3>
+            <p>¿Cuántas tarjetas quieres estudiar?</p>
+            <div class="btn-grid-cant">
+                <button class="btn-action" onclick="prepararMazo(5)">5</button>
+                <button class="btn-action" onclick="prepararMazo(15)">15</button>
+                <button class="btn-action" onclick="prepararMazo(30)">30</button>
+                <button class="btn-action" onclick="prepararMazo(0)">Todo</button>
+            </div>
+            <button onclick="cerrarModales()" style="margin-top:20px; border:none; background:none; color:#aaa;">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="modal-fin">
+        <div class="modal-content">
+            <h2>¡Sesión Lista! 🎉</h2>
+            <div class="btn-fin-group">
+                <button class="btn-action" onclick="reiniciarSesion()" style="background:var(--primary); color:white; border:none;">Repetir</button>
+                <button class="btn-action" onclick="irAlMenu()">Volver al Menú</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button id="dict-btn" onclick="toggleDict()">📖</button>
+<div id="dict-panel">
+    <div class="dict-header">
+        <span>Diccionario</span>
+        <button onclick="toggleDict()" style="background:none; border:none; color:white;">×</button>
+    </div>
+    <div class="dict-body">
+        <input type="text" id="dict-input" placeholder="Buscar..." oninput="buscar()">
+        <div id="dict-res" class="dict-res"></div>
+    </div>
+</div>
+
+<script>
+    let frases = [];
+    let frasesCompletas = [];
+    let diccionario = [];
+    let idx = 0;
+    let ultimoTamano = 0;
+
+    const vMenu = document.getElementById('view-menu');
+    const vGame = document.getElementById('view-game');
+    const domInp = document.getElementById('input');
+
+    async function cargarDiccionario() {
+        try {
+            const res = await fetch('data/diccionario.json');
+            diccionario = await res.json();
+        } catch (e) { console.log("Diccionario no cargado."); }
+    }
+    cargarDiccionario();
+
+    function cerrarModales() {
+        document.getElementById('modal-limite').style.display = 'none';
+        document.getElementById('modal-fin').style.display = 'none';
+    }
+
+    function irAlMenu() {
+        cerrarModales();
+        vGame.classList.remove('active');
+        vMenu.classList.add('active');
+    }
+
+    async function empezarJuego(archivo) {
+        try {
+            const res = await fetch(`data/${archivo}`);
+            if (!res.ok) throw new Error("Archivo no encontrado");
+            frasesCompletas = await res.json();
+            document.getElementById('titulo-mazo-modal').innerText = archivo.replace('.json', '').toUpperCase();
+            document.getElementById('modal-limite').style.display = 'flex';
+        } catch (e) { 
+            alert("No se pudo cargar el archivo: data/" + archivo + "\n\nRevisa que el nombre sea exacto."); 
+        }
+    }
+
+    function prepararMazo(cantidad) {
+        ultimoTamano = cantidad;
+        let temp = [...frasesCompletas];
+        barajar(temp);
+        frases = (cantidad > 0) ? temp.slice(0, cantidad) : temp;
+        
+        cerrarModales();
+        idx = 0;
+        vMenu.classList.remove('active');
+        vGame.classList.add('active');
+        cargarFrase();
+        setTimeout(() => domInp.focus(), 100);
+    }
+
+    function cargarFrase() {
+        document.getElementById('objetivo').innerText = frases[idx].h;
+        document.getElementById('pinyin').innerText = frases[idx].p;
+        document.getElementById('pinyin').classList.remove('show');
+        document.getElementById('game-status').innerText = `Frase ${idx + 1} de ${frases.length}`;
+        domInp.value = "";
+        domInp.classList.remove('correct');
+    }
+
+    domInp.addEventListener('input', () => {
+        if (domInp.value.trim() === frases[idx].h) {
+            domInp.classList.add('correct');
+            setTimeout(() => {
+                idx++;
+                if (idx >= frases.length) {
+                    document.getElementById('modal-fin').style.display = 'flex';
+                } else {
+                    cargarFrase();
+                }
+            }, 300);
+        }
+    });
+
+    function reiniciarSesion() {
+        prepararMazo(ultimoTamano);
+    }
+
+    window.addEventListener('keydown', (e) => {
+        if (e.code === "Space" && vGame.classList.contains('active')) {
+            if (document.activeElement !== domInp) {
+                e.preventDefault();
+                document.getElementById('pinyin').classList.toggle('show');
+            }
+        }
+    });
+
+    function barajar(a) {
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+    }
+
+    function toggleDict() {
+        document.getElementById('dict-panel').classList.toggle('open');
+    }
+
+    function buscar() {
+        const q = document.getElementById('dict-input').value.toLowerCase();
+        const resDiv = document.getElementById('dict-res');
+        resDiv.innerHTML = "";
+        if(!q) return;
+        diccionario.filter(i => i.h.includes(q) || i.p.toLowerCase().includes(q) || (i.s && i.s.toLowerCase().includes(q)))
+                   .forEach(i => {
+                       resDiv.innerHTML += `<div class="dict-item"><b>${i.h}</b> (${i.p})<br><span>${i.s || ''}</span></div>`;
+                   });
+    }
+</script>
+</body>
+</html>
