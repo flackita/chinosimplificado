@@ -339,17 +339,27 @@
     <div class="modal-content" style="position: relative;">
         <button onclick="cerrarModalSeleccion()" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #888;">&times;</button>
         
-        <h3>¿Cuántas practicar?</h3>
-        <div class="menu-grid" style="grid-template-columns:1fr 1fr 1fr">
-            <button onclick="prepararMazo(5)" class="btn-action">5</button>
-            <button onclick="prepararMazo(15)" class="btn-action">15</button>
-            <button onclick="prepararMazo(15)" class="btn-action">30</button>
-            <button onclick="prepararMazo(0)" class="btn-action">Todo</button>
+        <h3 id="modal-titulo">¿Cuántas practicar?</h3>
+
+        <div id="selector-unidad-container" style="margin-bottom: 15px; display: none; text-align: left;">
+            <label style="font-size: 0.8rem; opacity: 0.7; display: block; margin-bottom: 5px;">Filtrar contenido:</label>
+            <select id="flash-unidad-select" style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; background: #f9f9f9; font-family: inherit;">
+                <option value="all">📚 Todo el Diccionario</option>
+                <option value="1">1️⃣ Unidad 1</option>
+                <option value="2">2️⃣ Unidad 2</option>
+            </select>
+        </div>
+
+        <div class="menu-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+            <button class="btn-action">5</button>
+            <button class="btn-action">15</button>
+            <button class="btn-action">30</button>
+            <button class="btn-action" style="grid-column: span 3; margin-top: 5px;">Todo</button>
         </div>
         
         <button onclick="cerrarModalSeleccion()" style="margin-top: 15px; background: #eee; color: #555; border: none; padding: 8px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold;">Cancelar</button>
     </div>
-    </div>
+</div>
 <div id="modal-fin">
   <div class="modal-content">
     <h2>¡Hecho! 🎉</h2>
@@ -531,23 +541,28 @@ if (usuarios[user] && usuarios[user].password === hash(pass)) {
 }
     }
 
-    async function empezarJuego(file) {
+async function empezarJuego(file) {
+    // 1. Ocultamos el selector de unidad (porque aquí la unidad ya viene fijada por el archivo)
+    document.getElementById('selector-unidad-container').style.display = 'none';
+    document.getElementById('modal-titulo').innerText = "¿Cuántas frases practicar?";
 
-    // RESETEAR BOTONES DEL MODAL PARA UNIDADES
+    // 2. RESETEAR BOTONES DEL MODAL (Ahora son 4 botones: índice 0, 1, 2 y 3)
     const botones = document.querySelectorAll('#modal-limite .btn-action');
     botones[0].onclick = () => prepararMazo(5);
     botones[1].onclick = () => prepararMazo(15);
-    botones[2].onclick = () => prepararMazo(0);
-        try {
-            const r = await fetch(`data/${file}`);
-            frasesCompletas = await r.json();
-            cambiarVista('view-game');
-            document.getElementById('modal-limite').style.display = 'flex';
-        } catch(e) { 
-    console.error(e);
-    alert("Error cargando datos.");
-}
+    botones[2].onclick = () => prepararMazo(30); // El nuevo botón de 30
+    botones[3].onclick = () => prepararMazo(0);  // El botón de "Todo"
+
+    try {
+        const r = await fetch(`data/${file}`);
+        frasesCompletas = await r.json();
+        cambiarVista('view-game');
+        document.getElementById('modal-limite').style.display = 'flex';
+    } catch(e) { 
+        console.error(e);
+        alert("Error cargando datos de la unidad.");
     }
+}
 
 function prepararMazo(cant) {
     cantidadElegida = cant; // Guardamos si eligió 5, 15 o todas (0)
@@ -621,42 +636,64 @@ document.getElementById('input').oninput = (e) => {
 
 let flashcardsCompletas = []; // Nueva variable global necesaria
 
-    async function empezarFlashcards(file) {
-        try {
-            const r = await fetch(`data/${file}`);
-            flashcardsCompletas = await r.json(); // Guardamos el total
-            cambiarVista('view-flashcards');
-            
-            // Abrimos el modal de selección
-            document.getElementById('modal-limite').style.display = 'flex';
-            
-            // Cambiamos el comportamiento de los botones del modal temporalmente
-            // para que llamen a 'prepararMazoFlash' en lugar de 'prepararMazo'
-            const botones = document.querySelectorAll('#modal-limite .btn-action');
-            botones[0].onclick = () => prepararMazoFlash(5);
-            botones[1].onclick = () => prepararMazoFlash(15);
-            botones[2].onclick = () => prepararMazoFlash(0); // "Todo" ahora será 30 o todas
-            
-        } catch(e) { 
-            console.error(e);
-            alert("Error cargando el diccionario.");
-        }
-    }
-        function prepararMazoFlash(cant) {
-        // Mezclamos todas las palabras disponibles
-        let temp = [...flashcardsCompletas].sort(() => Math.random() - 0.5);
-        
-        // Si elegiste 0 (Todo), podrías limitarlo a 30 o dejarlo libre
-        if (cant === 0) {
-            flashcards = temp; // Todas las palabras
-        } else {
-            flashcards = temp.slice(0, cant); // Solo las que elegiste
-        }
+async function empezarFlashcards(file) {
+    // 1. Mostramos el selector de unidades (porque en Flashcards sí queremos filtrar)
+    document.getElementById('selector-unidad-container').style.display = 'block';
+    document.getElementById('modal-titulo').innerText = "¿Qué unidades repasar?";
 
-        flashIdx = 0;
-        document.getElementById('modal-limite').style.display = 'none';
-        cargarFlashContenido();
+    // 2. Configuramos los 4 botones del modal para usar 'prepararMazoFlash'
+    const botones = document.querySelectorAll('#modal-limite .btn-action');
+    botones[0].onclick = () => prepararMazoFlash(5);
+    botones[1].onclick = () => prepararMazoFlash(15);
+    botones[2].onclick = () => prepararMazoFlash(30); // Nuevo botón
+    botones[3].onclick = () => prepararMazoFlash(0);  // Botón "Todo"
+
+    try {
+        const r = await fetch(`data/${file}`);
+        flashcardsCompletas = await r.json(); 
+        
+        cambiarVista('view-flashcards');
+        document.getElementById('modal-limite').style.display = 'flex';
+    } catch(e) { 
+        console.error(e);
+        alert("Error cargando el diccionario.");
     }
+}
+function prepararMazoFlash(cant) {
+    // 1. Miramos qué unidad se seleccionó en el modal
+    const unidadElegida = document.getElementById('flash-unidad-select').value;
+    
+    // 2. FILTRAR: Creamos una base que solo tenga las palabras de esa unidad
+    let baseFiltrada = [];
+    
+    if (unidadElegida === 'all') {
+        // Si eligió "Todo", usamos el diccionario completo
+        baseFiltrada = [...flashcardsCompletas];
+    } else {
+        // Si eligió una unidad (1, 2, etc.), filtramos por el campo "u"
+        baseFiltrada = flashcardsCompletas.filter(item => item.u == unidadElegida);
+    }
+
+    // 3. Verificamos si hay palabras (por si acaso el JSON está vacío o mal etiquetado)
+    if (baseFiltrada.length === 0) {
+        alert("No hay palabras para la Unidad " + unidadElegida + " en el diccionario.");
+        return;
+    }
+
+    // 4. MEZCLAR: Ahora sí, mezclamos solo lo que pasó el filtro
+    let temp = baseFiltrada.sort(() => Math.random() - 0.5);
+    
+    // 5. CORTAR: Elegimos la cantidad (5, 15, 30 o todas)
+    if (cant === 0) {
+        flashcards = temp; 
+    } else {
+        flashcards = temp.slice(0, cant);
+    }
+
+    flashIdx = 0;
+    document.getElementById('modal-limite').style.display = 'none';
+    cargarFlashContenido();
+}
 
     function cargarFlashContenido() {
         const item = flashcards[flashIdx];
