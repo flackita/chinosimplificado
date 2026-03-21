@@ -256,7 +256,7 @@
         <div style="width: 1px; height: 25px; background: rgba(0,0,0,0.1);"></div>
 
         <div class="user-badge" style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.2rem;">👤</span>
+            <span style="font-size: 1.2rem;">🐱</span>
             <div style="display: flex; flex-direction: column; line-height: 1.2;">
                 <b id="nav-username" style="font-size: 0.9rem;">Invitado</b>
                 <div style="font-size: 0.7rem; opacity: 0.8;">Progreso: <span id="nav-progress">0</span></div>
@@ -285,7 +285,7 @@
         <div class="unit-group">
             <div class="menu-grid">
                 <div class="deck-card" onclick="empezarFlashcards('diccionario.json')">
-                    <span style="font-size:2rem">🗂️</span>
+                    <span style="font-size:2rem">📜</span>
                     <h3>Diccionario Interactivo</h3>
                     <p style="font-size:0.8rem; opacity:0.6; margin:5px 0 0 0;">Flashcards 3D</p>
                 </div>
@@ -499,7 +499,7 @@ if (usuarios[user] && usuarios[user].password === hash(pass)) {
         const btnAdm = document.getElementById('btn-admin-nav');
         if (!usuarioActual) {
             navName.innerText = "Invitado"; navProg.innerText = "0";
-            btnAct.innerText = "Iniciar Sesión"; btnAdm.style.display = "none";
+            btnAct.innerText = "🔑"; btnAdm.style.display = "none";
         } else {
             navName.innerText = usuarioActual; btnAct.innerText = "Salir";
             btnAdm.style.display = (usuarioActual === ADMIN_USER) ? "block" : "none";
