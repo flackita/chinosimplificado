@@ -231,25 +231,44 @@
             top: 30%;
             opacity: 1;
         }
+       .nav-left-group span:first-child {
+    background: linear-gradient(45deg, #6d1cc9, #b90c9c); 
+    background-clip: text;                
+    -webkit-background-clip: text;       
+    color: transparent;             
+    -webkit-text-fill-color: transparent;  
+    font-weight: bold;
+    font-size: 1.2rem;
+}
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <div id="navbar-session" class="navbar">
-        <div class="user-badge">
+    <div id="navbar-session" class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px;">
+    
+    <div class="nav-left-group" style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; flex-direction: column; line-height: 1.1;">
+            <span style="font-size: 2.0rem; font-weight: bold; color: var(--primary);">你好小猫</span>
+        </div>
+
+        <div style="width: 1px; height: 25px; background: rgba(0,0,0,0.1);"></div>
+
+        <div class="user-badge" style="display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 1.2rem;">👤</span>
-            <div>
-                <b id="nav-username">Invitado</b>
+            <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                <b id="nav-username" style="font-size: 0.9rem;">Invitado</b>
                 <div style="font-size: 0.7rem; opacity: 0.8;">Progreso: <span id="nav-progress">0</span></div>
             </div>
         </div>
-        <div style="display:flex; align-items: center;">
-            <button id="btn-admin-nav" onclick="cambiarVista('view-admin')" class="btn-session btn-admin-nav">⚙️</button>
-            <button id="btn-session-action" onclick="abrirSeccionUsuario()" class="btn-session">Sesión</button>
-            <button onclick="toggleDarkMode()" class="theme-switch" id="theme-icon">🌙</button>
-        </div>
     </div>
+
+    <div style="display:flex; align-items: center; gap: 5px;">
+        <button id="btn-admin-nav" onclick="cambiarVista('view-admin')" class="btn-session btn-admin-nav">⚙️</button>
+        <button id="btn-session-action" onclick="abrirSeccionUsuario()" class="btn-session">Sesión</button>
+        <button onclick="toggleDarkMode()" class="theme-switch" id="theme-icon">🌙</button>
+    </div>
+</div>
 
     <div id="view-menu" class="view active">
         <h2 class="section-title">Ruta de Aprendizaje</h2>
