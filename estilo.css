@@ -1,0 +1,232 @@
+/* ============================================================
+   1. VARIABLES GLOBALES Y TEMAS
+   ============================================================ */
+:root {
+    --primary: #2f5d50;
+    --secondary: #7aa17a;
+    --accent: #c2a878;
+    --bg: #f5f1e6;
+    --surface: #ffffff;
+    --text: #2e2e2e;
+    --border: #d8cfc0;
+    --progress-bg: #dcd6c8;
+    --admin: #4db6ac;
+    --success: #4caf50;
+}
+
+body.dark-mode {
+    --bg: #121212;
+    --surface: #1e1e1e;
+    --text: #a0b0a0; /* Ajustado para mejor lectura */
+    --border: #333;
+    --primary: #bb86fc;
+    --secondary: #03dac6;
+    --accent: #2c0091;
+    --progress-bg: #2d2d2d;
+    background: linear-gradient(to bottom, #0a0a0a 0%, #1a1a2e 100%) !important;
+}
+
+/* ============================================================
+   2. ESTRUCTURA BASE
+   ============================================================ */
+body { 
+    font-family: 'Segoe UI', Roboto, sans-serif; 
+    background: linear-gradient(to bottom, var(--bg) 0%, #e8e2d3 100%);
+    background-attachment: fixed; 
+    color: var(--text); 
+    margin: 0; 
+    padding: 0;
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh; 
+    overflow-x: hidden;
+}
+
+.app-container { width: 95%; max-width: 1300px; padding: 20px; text-align: center; }
+
+.view { display: none; width: 100%; }
+.view.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+/* ============================================================
+   3. NAVBAR Y NAVEGACIÓN
+   ============================================================ */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(39, 83, 70, 0.9);
+    padding: 10px 20px;
+    border-radius: 50px; 
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(47, 93, 80, 0.8);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+body.dark-mode .navbar {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255,255,255,0.1);
+}
+
+.user-badge { display: flex; align-items: center; gap: 10px; color: white; font-size: 0.9rem; text-align: left; }
+.btn-session { background: var(--secondary); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 0.8rem; transition: 0.3s; }
+.btn-admin-nav { background: var(--admin); margin-right: 8px; display: none; }
+
+.theme-switch {
+    background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
+    width: 35px; height: 35px; cursor: pointer; font-size: 1.2rem;
+    display: flex; align-items: center; justify-content: center; margin-left: 10px;
+}
+
+.btn-back { 
+    background: none; border: none; color: var(--primary); cursor: pointer; 
+    font-weight: bold; margin-bottom: 20px; display: block; font-size: 1rem;
+}
+body.dark-mode .btn-back { color: var(--secondary); }
+
+/* ============================================================
+   4. COMPONENTES DE JUEGO (TARJETAS Y PANELES)
+   ============================================================ */
+.card-panel { 
+    background: var(--surface); padding: 30px; border-radius: 40px; 
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+    width: 90%; max-width: 600px; margin: 20px auto; transition: all 0.3s ease;
+}
+
+#objetivo { font-size: 4.5rem; margin: 20px 0; line-height: 1.2; }
+
+input { 
+    width: 100%; padding: 15px; font-size: 1.2rem; border: 3px solid var(--border); 
+    border-radius: 20px; text-align: center; outline: none; box-sizing: border-box; margin-bottom: 10px;
+    transition: 0.3s; background: var(--surface); color: var(--text);
+}
+
+/* Flashcards 3D */
+.flash-game-container { max-width: 400px; margin: 20px auto; perspective: 1000px; width: 100%; }
+.flashcard-3d { width: 100%; height: 280px; cursor: pointer; }
+.flash-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+.flashcard-3d.flipped .flash-inner { transform: rotateY(180deg); }
+
+.flash-front, .flash-back {
+    position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    border-radius: 30px; border: 2px solid var(--border); box-sizing: border-box; padding: 20px;
+}
+.flash-front { background: var(--surface); }
+.flash-back { background: var(--success); color: white; transform: rotateY(180deg); text-align: center; }
+
+#flash-respuesta { font-size: 2.5rem; font-weight: bold; display: block; margin-bottom: 10px; }
+#flash-significado-back { font-size: 1.2rem; display: block; opacity: 0.9; }
+
+/* ============================================================
+   5. MENÚS Y GRIDS
+   ============================================================ */
+.unit-group {
+    background: linear-gradient(to bottom, var(--surface) 0%, #e8e2d3 100%);
+    border: 1px solid var(--border); padding: 25px; border-radius: 25px; margin-bottom: 20px;
+}
+
+.section-title {
+    text-align: center; margin: 30px auto 15px auto; color: var(--primary); 
+    font-size: 0.85rem; font-weight: 600; text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.5); padding: 8px 25px; border-radius: 50px; display: table;
+}
+
+.grid-unidades, .training-grid-container {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%;
+}
+
+.deck-card { 
+    background: var(--surface); padding: 30px 15px; border-radius: 25px; 
+    font-size: 1.1rem; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    cursor: pointer; transition: 0.2s; border: 2px solid transparent; color: var(--text);
+}
+.deck-card:hover { transform: translateY(-5px); border-color: var(--secondary); }
+
+@media (max-width: 800px) {
+    .grid-unidades, .training-grid-container { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================================
+   6. MODALES (CORREGIDOS)
+   ============================================================ */
+#modal-limite, #modal-fin, #modal-usuario {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background-color: rgba(0,0,0,0.6);
+    display: none; align-items: center; justify-content: center;
+    z-index: 9999; backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: var(--surface) !important;
+    padding: 30px; border-radius: 35px; width: 85%; max-width: 350px;
+    display: flex; flex-direction: column; align-items: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border: 2px solid var(--border); position: relative;
+}
+
+#modal-limite .btn-container {
+    display: flex; flex-direction: column; gap: 12px; width: 100%; margin-top: 15px;
+}
+
+.btn-action { 
+    background: var(--primary); color: white; border: none; padding: 14px; 
+    border-radius: 15px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s;
+}
+.btn-action:hover { opacity: 0.9; transform: scale(1.02); }
+
+#modal-fin h2 { white-space: pre-line; margin-bottom: 20px; color: var(--primary); }
+
+/* ============================================================
+   7. UTILIDADES Y OTROS
+   ============================================================ */
+.progress-container { width: 100%; background: var(--progress-bg); height: 8px; border-radius: 10px; margin-bottom: 20px; overflow: hidden; }
+#barra-progreso { width: 0%; height: 100%; background: var(--secondary); transition: width 0.6s ease; }
+
+@media (max-width: 600px) {
+    #objetivo { font-size: 3rem; }
+    .card-panel { padding: 20px; }
+}
+/* Espaciado del selector */
+.selector-wrapper {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#flash-unidad-select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 15px;
+    border: 2px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* La rejilla de los números (5, 15, 30) */
+.grid-cantidades {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas iguales */
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* El botón "Todo" debajo */
+.btn-todo {
+    background: var(--secondary) !important; /* Color diferente para resaltar */
+}
+
+/* Botón de cerrar (X) */
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text);
+    line-height: 1;
+}
