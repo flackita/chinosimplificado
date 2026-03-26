@@ -2,281 +2,36 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#8b0000">
-<link rel="apple-touch-icon" href="icon.png">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
-    <title>你好小猫</title>
-   <style>
-    /* Variables y Modo Oscuro */
-        :root { 
-            --primary: #b39ddb; --secondary: #f48fb1; --accent: #81d4fa; 
-            --success: #a5d6a7; --warning: #fff59d; --bg: #f8f9fa; 
-            --surface: #ffffff; --text: #5d4037; --border: #e1bee7; 
-            --admin: #4db6ac; --error: #ff8a80;
-            --progress-bg: #e0e0e0; /* Color barra modo claro */
-        }
-
-        body.dark-mode {
-            --bg: #121212;
-            --surface: #1e1e1e;
-            --text: #e0e0e0;
-            --border: #333333;
-            --primary: #bb86fc;
-            --secondary: #03dac6;
-            --accent: #2c0091;
-            --admin: #4db6ac;
-            --progress-bg: #2d2d2d; /* Gris oscuro para que no brille en modo dark */
-            background: linear-gradient(to bottom, #0a0a0a 0%, #1a1a2e 100%) !important;
-        }
-
-        /* Estilos de la Barra de Progreso */
-        .progress-container {
-            width: 100%;
-            background: var(--progress-bg);
-            height: 8px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        #barra-progreso {
-            width: 0%;
-            height: 100%;
-            background: var(--secondary);
-            box-shadow: 0 0 8px var(--secondary);
-            transition: width 0.6s ease;
-        }
-
-        /* Corrección Panel Admin en Modo Oscuro */
-        body.dark-mode .card-panel { background: #252525; color: #e0e0e0; }
-        body.dark-mode #admin-user-list-container { background: #1a1a1a !important; border: 1px solid #333; }
-        body.dark-mode #admin-user-list div { border-bottom: 1px solid #333 !important; }
-        body.dark-mode #admin-user-list b { color: var(--secondary); }
-
-        body { 
-    font-family: 'Segoe UI', Roboto, sans-serif; 
-    background: linear-gradient(to bottom, #9575cd 0%, #fce4ec 100%); 
-    background-attachment: fixed; 
-    color: var(--text); 
-    margin: 0; 
-    padding: 0;
-    display: flex; 
-    flex-direction: column; /* El body fluye hacia abajo... */
-    align-items: center;    /* ...pero centra el contenido horizontalmente */
-    min-height: 100vh; 
-    overflow-x: hidden;
-}
-
-        .app-container { width: 95%; max-width: 1300px; padding: 20px; text-align: center; }
-        .view { display: none; }
-        .view.active {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-        /* Para que el botón "Volver" no se mueva al centro y se quede arriba a la izquierda */
-        .btn-back { 
-            align-self: flex-start; 
-            margin-bottom: 20px;
-        }
-
-        /* Aseguramos que la tarjeta no se estire raro */
-        .card-panel {
-            width: 100%;
-            max-width: 400px;
-            margin: 0 auto; /* Refuerzo de centrado horizontal */
-            position: relative; /* Necesario para el mensaje de éxito */
-        }
-
-        /* Navbar */
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255, 255, 255, 0.2); padding: 10px 20px;
-            border-radius: 50px; margin-bottom: 20px; backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        body.dark-mode .navbar { background: rgba(0, 0, 0, 0.4); border-color: rgba(255,255,255,0.1); }
-        .user-badge { display: flex; align-items: center; gap: 10px; color: white; font-size: 0.9rem; text-align: left; }
-        .btn-session { background: var(--secondary); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; font-size: 0.8rem; transition: 0.3s; }
-        .btn-admin-nav { background: var(--admin); margin-right: 8px; display: none; }
-
-        .theme-switch {
-            background: rgba(255,255,255,0.1); border: none; border-radius: 50%;
-            width: 35px; height: 35px; cursor: pointer; font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center; margin-left: 10px;
-        }
-
-        /* Tarjetas */
-        .menu-grid {
-    display: grid; /* Activa el modo rejilla */
-    gap: 20px;     /* Espacio entre tarjetas */
-    width: 100%;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* ¡Magia horizontal! */
-}
-        .grid-unidades { 
-    grid-template-columns: repeat(4, 1fr) !important; 
-}
-        @media (max-width: 600px) { 
-    .grid-unidades { 
-        grid-template-columns: repeat(2, 1fr) !important; 
-    } 
-}
-
-        .deck-card { 
-            background: var(--surface); padding: 40px 20px; border-radius: 25px; font-size: 1.2rem;
-            box-shadow: 0 8px 20px rgba(179, 157, 219, 0.2); cursor: pointer;
-            transition: 0.2s; border: 2px solid transparent;
-        }
-        .deck-card:hover { transform: translateY(-5px); border-color: var(--secondary); }
-        .unit-group {
-            background: rgba(255, 255, 255, 0.3); padding: 20px; border-radius: 30px;
-            margin-bottom: 30px; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-        body.dark-mode .unit-group { background: rgba(30, 30, 30, 0.4); }
-
-        .section-title {
-            text-align: center; margin: 30px auto 15px auto; color: white; 
-            font-size: 0.85rem; font-weight: 600; text-transform: uppercase;
-            background: rgba(255, 255, 255, 0.2); padding: 8px 25px; border-radius: 50px; display: table;
-        }
-
-        .card-panel { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 35px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-            
-            /* Adaptabilidad */
-            width: 90%; 
-            max-width: 800px; /* En PC se expandirá hasta 800px */
-            margin: 20px auto; 
-            transition: all 0.3s ease;
-        }
-
-        /* Ajuste para que el texto grande no se rompa */
-        #objetivo {
-            font-size: 4.5rem; 
-            margin: 20px 0;
-            word-wrap: break-word; /* Por si la frase es MUY larga */
-            line-height: 1.2;
-        }
-
-        /* Si estás en un móvil (pantalla pequeña), vuelve a ser más angosto */
-        @media (max-width: 600px) {
-            .card-panel {
-                max-width: 400px;
-                padding: 20px 15px;
-            }
-            #objetivo {
-                font-size: 3rem; /* Texto un poco más chico en móvil para que quepa */
-            }
-        }
-
-        input { 
-            width: 100%; padding: 15px; font-size: 1.2rem; border: 3px solid var(--border); 
-            border-radius: 20px; text-align: center; outline: none; box-sizing: border-box; margin-bottom: 10px;
-            transition: 0.3s;
-        }
-        body.dark-mode input { background: #121212; color: white; border-color: #444; }
-
-        .btn-back { background: none; border: none; color: white; cursor: pointer; font-weight: bold; margin-bottom: 20px; display: block; font-size: 1rem;}
-
-        /* Flashcards 3D */
-        .flash-game-container { max-width: 400px; margin: 20px auto; perspective: 1000px; }
-        .flashcard-3d { width: 100%; height: 250px; cursor: pointer; }
-        .flash-inner { position: relative; width: 100%; height: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
-        .flashcard-3d.flipped .flash-inner { transform: rotateY(180deg); }
-        .flash-front, .flash-back {
-            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-radius: 30px; border: 2px solid var(--border);
-        }
-        .flash-front { background: var(--surface); }
-        .flash-back { background: var(--success); color: white; transform: rotateY(180deg); }
-
-        .btn-action { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 15px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
-        
-        #flash-pregunta, #flash-respuesta, #flash-significado-back { transition: opacity 0.2s; }
-        .contenido-oculto { opacity: 0 !important; }
-
-        #dict-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--primary); color: white; border-radius: 50%; border: none; font-size: 1.5rem; cursor: pointer; z-index: 1000; }
-        #dict-panel { position: fixed; bottom: 100px; right: 30px; width: 300px; background: white; border-radius: 20px; display: none; flex-direction: column; z-index: 1000; max-height: 50vh; border: 2px solid var(--border); overflow: hidden; }
-        body.dark-mode #dict-panel { background: #252525; color: white; }
-        #dict-panel.open { display: flex; }
-        
-        #modal-limite, #modal-fin {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(4px);
-        }
-        .modal-content { background: white; padding: 30px; border-radius: 30px; max-width: 300px; width: 85%; }
-        body.dark-mode .modal-content { background: #252525; color: white; }
-        /* Animación para el mensaje de éxito */
-        .feedback-check {
-            position: absolute;
-            top: 20%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: var(--success);
-            color: white;
-            padding: 10px 25px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 100;
-            pointer-events: none;
-            opacity: 0;
-            transition: 0.3s;
-        }
-        .feedback-check.show {
-            top: 30%;
-            opacity: 1;
-        }
-       .nav-left-group span:first-child {
-    background: linear-gradient(45deg, #6d1cc9, #b90c9c); 
-    background-clip: text;                
-    -webkit-background-clip: text;       
-    color: transparent;             
-    -webkit-text-fill-color: transparent;  
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-    </style>
+    <title>HanziCopy</title>
+    <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
-
 <div class="app-container">
     <div id="navbar-session" class="navbar" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px;">
-    
-    <div class="nav-left-group" style="display: flex; align-items: center; gap: 12px;">
-        <div style="display: flex; flex-direction: column; line-height: 1.1;">
-            <span style="font-size: 1.5rem; font-weight: bold; color: var(--primary);">你好小猫</span>
-        </div>
-
-        <div style="width: 1px; height: 25px; background: rgba(0,0,0,0.1);"></div>
-
-        <div class="user-badge" style="display: flex; align-items: center; gap: 8px;">
-            <span style="font-size: 1.2rem;">🐱</span>
-            <div style="display: flex; flex-direction: column; line-height: 1.2;">
-                <b id="nav-username" style="font-size: 0.9rem;">Invitado</b>
-                <div style="font-size: 0.7rem; opacity: 0.8;">Progreso: <span id="nav-progress">0</span></div>
+        <div class="nav-left-group" style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 1.5rem; font-weight: bold;">你好</span>
+            <div style="width: 1px; height: 25px; background: rgba(0,0,0,0.1);"></div>
+            <div class="user-badge" style="display: flex; align-items: center; gap: 8px;">
+                <span>🐱</span>
+                <div style="display: flex; flex-direction: column; line-height: 1.2;">
+                    <b id="nav-username" style="font-size: 0.9rem;">Invitado</b>
+                    <div style="font-size: 0.7rem; opacity: 0.8;">Progreso: <span id="nav-progress">0</span></div>
+                </div>
             </div>
         </div>
+        <div style="display:flex; align-items: center; gap: 5px;">
+            <button id="btn-admin-nav" onclick="cambiarVista('view-admin')" class="btn-session btn-admin-nav">⚙️</button>
+            <button id="btn-session-action" onclick="abrirSeccionUsuario()" class="btn-session">Sesión</button>
+            <button onclick="toggleDarkMode()" class="theme-switch" id="theme-icon">🌙</button>
+        </div>
     </div>
-
-    <div style="display:flex; align-items: center; gap: 5px;">
-        <button id="btn-admin-nav" onclick="cambiarVista('view-admin')" class="btn-session btn-admin-nav">⚙️</button>
-        <button id="btn-session-action" onclick="abrirSeccionUsuario()" class="btn-session">Sesión</button>
-        <button onclick="toggleDarkMode()" class="theme-switch" id="theme-icon">🌙</button>
-    </div>
-</div>
 
     <div id="view-menu" class="view active">
         <h2 class="section-title">Ruta de Aprendizaje</h2>
         <div class="unit-group">
-            <div class="menu-grid grid-unidades">
+            <div class="menu-grid training-grid-container">
                 <div class="deck-card" onclick="empezarJuego('unidad1.json')"><h3>Unidad 1</h3></div>
                 <div class="deck-card" onclick="empezarJuego('unidad2.json')"><h3>Unidad 2</h3></div>
                 <div class="deck-card" onclick="empezarJuego('unidad3.json')"><h3>Unidad 3</h3></div>
@@ -284,72 +39,50 @@
             </div>
         </div>
         <h2 class="section-title">Entrenamiento</h2>
-        <div class="unit-group">
-            <div class="menu-grid">
-                <div class="deck-card" onclick="empezarFlashcards('diccionario.json')">
-                    <span style="font-size:2rem">📜</span>
-                    <h3>Diccionario Interactivo</h3>
-                    <p style="font-size:0.8rem; opacity:0.6; margin:5px 0 0 0;">Flashcards 3D</p>
-                </div>
+        <div class="training-grid-container">
+            <div class="deck-card main-dictionary-card training-card" onclick="entrenarCategoria('all')">
+                <span style="font-size:3rem">📜</span><h3>Diccionario</h3>
             </div>
-        </div>
-    </div>
-
-    <div id="view-login" class="view">
-        <button class="btn-back" onclick="irAlMenu()">← Volver</button>
-        <div class="card-panel">
-            <h2 id="login-title" style="color:var(--primary)">Tu Perfil</h2>
-            <p id="login-desc" style="font-size: 0.8rem; opacity: 0.7; margin-bottom: 20px;">Accede para guardar tus avances</p>
-            <input type="text" id="login-user" placeholder="Usuario">
-            <input type="password" id="login-pass" placeholder="Contraseña">
-            <input type="password" id="login-pass-repeat" placeholder="Repetir contraseña" style="display:none;" oninput="validarPasswords()">
-            <div id="login-actions" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-                <button id="btn-login-action" onclick="login()" class="btn-action">Entrar</button>
-                <button onclick="mostrarModoRegistro()" class="btn-action" style="background: var(--secondary);">Crear Perfil</button>
-            </div>
-            <div id="register-actions" style="display: none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-                <button id="btn-register-confirm" onclick="registrarse()" class="btn-action" style="background: var(--success);">Confirmar</button>
-                <button onclick="mostrarModoLogin()" class="btn-action" style="background: #ccc;">Cancelar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="view-admin" class="view">
-        <button class="btn-back" onclick="irAlMenu()">← Volver al menú</button>
-        <div class="card-panel" style="max-width: 600px;">
-            <h2 style="color: var(--admin)">Panel de Administración</h2>
-            <div id="admin-user-list-container" style="text-align: left; background: #f9f9f9; padding: 15px; border-radius: 20px; max-height: 300px; overflow-y: auto;">
-                <h4 style="margin-top:0">Usuarios Registrados:</h4>
-                <div id="admin-user-list"></div>
-            </div>
-            <button onclick="exportarUsuarios()" class="btn-action" style="margin-top:15px; background: var(--accent)">Descargar Backup JSON</button>
+            <div class="deck-card training-card" onclick="entrenarCategoria('fruta')"><h3> 🍑 <br>Fruta</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('comida')"><h3> 🍜 <br>Comida</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('numeros')"><h3> 🔢 <br>Números</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('tiempo')"><h3> ⏳ <br>Tiempo</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('bebida')"><h3> 🧋 <br>Bebidas</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('animales')"><h3> 🐈 <br> Animales</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('figuras')"><h3>📐⚪🔶<br> Figuras</h3></div> 
+            <div class="deck-card training-card" onclick="entrenarCategoria('objetos')"><h3>💍📖🪞<br>Objetos</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('clima')"><h3> ⛅ <br> Clima</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('colores')"><h3>🟡🔴🔵 <br>Colores</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('personas')"><h3> 🤸 <br>Personas</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('personas')"><h3> 🌎 <br>Paises</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('personas')"><h3> ✈️ <br>Viajes</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('personas')"><h3> 👄 <br>Cuerpo</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('personas')"><h3> 👨‍👩‍👧‍👦 <br>Familia</h3></div>
+            <div class="deck-card training-card" onclick="entrenarCategoria('personas')"><h3> 👗 <br>Ropa</h3></div>
         </div>
     </div>
 
     <div id="view-game" class="view">
-    <button class="btn-back" onclick="irAlMenu()">← Volver</button>
-    <div class="card-panel" style="position: relative;">
-        <div class="progress-container">
-    <div id="barra-progreso"></div>
-</div>
-        <div id="feedback-msg" class="feedback-check">¡Excelente!</div>
-            <h1 id="objetivo" style="font-size:4.5rem; margin:0;">---</h1>
-            <div id="pinyin" style="font-size:1.6rem; color:var(--primary); margin-bottom: 20px;">---</div>
+        <button class="btn-back" style="color: #5a7257;" onclick="irAlMenu()">← Volver</button>
+        <div class="card-panel">
+            <div class="progress-container"><div id="barra-progreso"></div></div>
+            <h1 id="objetivo">---</h1>
+            <div id="pinyin">---</div>
             <input type="text" id="input" placeholder="Escribe el carácter...">
-            <button onclick="mostrarPinyin()" class="btn-action" style="background:var(--accent); width:auto; padding:10px 20px;">💡 Pista</button>
+            <button onclick="mostrarPinyin()" class="btn-action" style="background:var(--accent); width:auto;">💡 Pista</button>
         </div>
     </div>
 
     <div id="view-flashcards" class="view">
-        <button class="btn-back" onclick="irAlMenu()">← Volver</button>
-        <div id="flash-status" style="color:white; margin-bottom:10px;"></div>
+        <button class="btn-back" style="color: #5a7257;" onclick="irAlMenu()">← Volver</button>
+        <div id="flash-status" style="color:#5a7257; margin-bottom:10px;"></div>
         <div class="flash-game-container">
             <div id="flash-card-obj" class="flashcard-3d">
                 <div class="flash-inner">
                     <div class="flash-front"><div id="flash-pregunta" style="font-size: 5rem;">---</div></div>
                     <div class="flash-back">
-                        <div id="flash-respuesta" style="font-size: 2.5rem;">---</div>
-                        <div id="flash-significado-back">---</div>
+                        <div id="flash-respuesta">---</div>
+                        <div id="flash-significado-back" style="font-size: 1.5rem; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.3); padding-top: 10px;">---</div>
                     </div>
                 </div>
             </div>
@@ -357,485 +90,322 @@
         </div>
     </div>
 
-    <div id="modal-limite">
-    <div class="modal-content" style="position: relative;">
-        <button onclick="cerrarModalSeleccion()" style="position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: #888;">&times;</button>
-        
-        <h3 id="modal-titulo">¿Cuántas practicar?</h3>
+    <div id="modal-limite" style="display: none;">
+        <div class="modal-content">
+    <button onclick="cerrarModalSeleccion()" class="close-btn">&times;</button>
+    
+    <h3 id="modal-titulo">¿Cuántas vamos a practicar?</h3>
 
-        <div id="selector-unidad-container" style="margin-bottom: 15px; display: none; text-align: left;">
-            <label style="font-size: 0.8rem; opacity: 0.7; display: block; margin-bottom: 5px;">Filtrar contenido:</label>
-            <select id="flash-unidad-select" style="width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ddd; background: #f9f9f9; font-family: inherit;">
-                <option value="all">📚 Todo el Diccionario</option>
-                <option value="1">1️⃣ Unidad 1</option>
-                <option value="2">2️⃣ Unidad 2</option>
-            </select>
-        </div>
+    <div id="selector-unidad-container" class="selector-wrapper">
+        <select id="flash-unidad-select">
+            <option value="all">📚 Todo el Diccionario</option>
+            <option value="1">1️⃣ Unidad 1</option>
+            <option value="2">2️⃣ Unidad 2</option>
+            <option value="3">2️⃣ Unidad 3</option>
+        </select>
+    </div>
 
-        <div class="menu-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
-            <button class="btn-action">5</button>
-            <button class="btn-action">15</button>
-            <button class="btn-action">30</button>
-            <button class="btn-action" style="grid-column: span 3; margin-top: 5px;">Todo</button>
+    <div class="modal-btns-wrapper">
+        <div class="grid-cantidades">
+            <button class="btn-action" onclick="iniciarSeleccion(5)">5</button>
+            <button class="btn-action" onclick="iniciarSeleccion(15)">15</button>
+            <button class="btn-action" onclick="iniciarSeleccion(30)">30</button>
         </div>
-        
-        <button onclick="cerrarModalSeleccion()" style="margin-top: 15px; background: #eee; color: #555; border: none; padding: 8px; border-radius: 10px; width: 100%; cursor: pointer; font-weight: bold;">Cancelar</button>
+        <button class="btn-action btn-todo" onclick="iniciarSeleccion(0)">Todo</button>
     </div>
 </div>
-<div id="modal-fin">
-  <div class="modal-content">
-    <h2>¡Hecho! 🎉</h2>
+    </div>
 
-    <button onclick="repetirSesion()" class="btn-action" style="margin-bottom:10px;">
-        🔁 Repetir
-    </button>
-
-    <button onclick="irAlMenu()" class="btn-action" style="background:#ccc; color:#333;">
-        🏠 Menú principal
-    </button>
-  </div>
+    <div id="modal-fin">
+        <div class="modal-content"><h2>¡Hecho! 🎉</h2><button onclick="irAlMenu()" class="btn-action">🏠 Menú</button></div>
+    </div>
+    <div id="modal-usuario" class="modal-limite" style="display:none;">
+    <div class="modal-content">
+        <button onclick="cerrarModalUsuario()" style="float:right; background:none; border:none; font-size:1.5rem; color:white;">&times;</button>
+        <div id="seccion-login">
+            <h3>Iniciar Sesión</h3>
+            <input type="text" id="login-user" placeholder="Usuario">
+            <button onclick="intentarLogin()" class="btn-action">Entrar</button>
+            <hr>
+            <p>¿No tienes cuenta?</p>
+            <button onclick="mostrarRegistro()" class="btn-action" style="background:#666;">Crear Cuenta</button>
+        </div>
+        <div id="seccion-registro" style="display:none;">
+            <h3>Nuevo Usuario</h3>
+            <input type="text" id="reg-user" placeholder="Nombre de usuario">
+            <button onclick="registrarUsuario()" class="btn-action">Registrar</button>
+            <button onclick="mostrarLogin()" class="btn-action" style="background:#666;">Volver</button>
+        </div>
+        <div id="seccion-perfil" style="display:none;">
+            <h3 id="perfil-nombre">---</h3>
+            <p>Progreso Total: <span id="perfil-puntos">0</span></p>
+            <button onclick="cerrarSesion()" class="btn-action" style="background:#e74c3c;">Cerrar Sesión</button>
+        </div>
+    </div>
 </div>
-
-<button id="dict-btn" onclick="toggleDict()">📖</button>
-<div id="dict-panel">
-    <input type="text" id="dict-input" placeholder="Buscar..." oninput="buscar()" style="border-radius:0; border:none; border-bottom:1px solid #eee;">
-    <div id="dict-res" style="overflow-y:auto; flex:1; text-align:left;"></div>
 </div>
 
 <script>
-    const ADMIN_USER = "admin";
-    const ADMIN_PASS_HASH = btoa("ChinoMaster2024!");
+let frases = [], frasesCompletas = [], idx = 0, flashIdx = 0, flashcards = [], bloqueado = false, categoriaActual = 'all', flashcardsCompletas = [];
+let buenas = 0, malas = 0, pistaUsada = false;
+let usuarioActual = JSON.parse(localStorage.getItem('usuarioSesion')) || null;
 
-function hash(str) {
-    return btoa(str);
+function cambiarVista(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('navbar-session').style.display = (id === 'view-game' || id === 'view-flashcards') ? 'none' : 'flex';
 }
-    let frases = [], frasesCompletas = [], diccionario = [], idx = 0, flashIdx = 0, flashcards = [];
-    let usuarioActual = null;
-    let bloqueado = false;
 
-
-    // --- FUNCIÓN ENTER ---
-    function configurarEnter() {
-        const inputIds = ["login-user", "login-pass", "login-pass-repeat"];
-        inputIds.forEach(id => {
-            document.getElementById(id).addEventListener("keypress", (e) => {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    if (document.getElementById('login-pass-repeat').style.display === "none") {
-                        login();
-                    } else {
-                        registrarse();
-                    }
-                }
-            });
-        });
-    }
-
-    function mostrarModoRegistro() {
-        document.getElementById('login-title').innerText = "Nuevo Perfil";
-        document.getElementById('login-desc').innerText = "Crea tu cuenta para no perder puntos";
-        document.getElementById('login-pass-repeat').style.display = "block";
-        document.getElementById('login-actions').style.display = "none";
-        document.getElementById('register-actions').style.display = "grid";
-    }
-
-    function mostrarModoLogin() {
-        document.getElementById('login-title').innerText = "Tu Perfil";
-        document.getElementById('login-desc').innerText = "Accede para guardar tus avances";
-        document.getElementById('login-pass-repeat').style.display = "none";
-        document.getElementById('login-actions').style.display = "grid";
-        document.getElementById('register-actions').style.display = "none";
-    }
-
-    function validarPasswords() {
-        const p1 = document.getElementById('login-pass').value;
-        const p2 = document.getElementById('login-pass-repeat').value;
-        const input2 = document.getElementById('login-pass-repeat');
-        if(!p2) { input2.style.borderColor = "var(--border)"; return; }
-        input2.style.borderColor = (p1 === p2) ? "var(--success)" : "var(--error)";
-    }
-
-    function abrirSeccionUsuario() {
-        if (usuarioActual) {
-            if(confirm("¿Cerrar sesión?")) { usuarioActual = null; actualizarInterfazUsuario(); }
-        } else { mostrarModoLogin(); cambiarVista('view-login'); }
-    }
-
-    function login() {
-        const user = document.getElementById('login-user').value.trim().toLowerCase();
-        const pass = document.getElementById('login-pass').value.trim();
-        if (user === ADMIN_USER && hash(pass) === ADMIN_PASS_HASH) {
-            usuarioActual = ADMIN_USER;
-            actualizarInterfazUsuario(); irAlMenu(); return;
-        }
-        let usuarios = JSON.parse(localStorage.getItem('chino_users') || "{}");
-
-if (usuarios[user] && usuarios[user].password === hash(pass)) {
-    usuarioActual = user;
-    actualizarInterfazUsuario();
-    irAlMenu();
-} else {
-    alert("Error: Usuario o contraseña incorrectos.");
-}
-    }
-
-    function registrarse() {
-        const user = document.getElementById('login-user').value.trim().toLowerCase();
-        const pass = document.getElementById('login-pass').value.trim();
-        const p2 = document.getElementById('login-pass-repeat').value.trim();
-        if (!/^[a-z0-9_]{3,12}$/.test(user) || user === "admin") {
-    return alert("Usuario inválido (3-12 caracteres, sin espacios).");
-}
-        if (pass.length < 4 || pass !== p2) return alert("Verifica los datos.");
-        let usuarios = JSON.parse(localStorage.getItem('chino_users') || "{}");
-        if (usuarios[user]) return alert("Ya existe.");
-        usuarios[user] = { password: hash(pass), progreso: 0 };
-        localStorage.setItem('chino_users', JSON.stringify(usuarios));
-        usuarioActual = user; actualizarInterfazUsuario(); irAlMenu();
-    }
-
-    function actualizarInterfazUsuario() {
-        const navName = document.getElementById('nav-username');
-        const navProg = document.getElementById('nav-progress');
-        const btnAct = document.getElementById('btn-session-action');
-        const btnAdm = document.getElementById('btn-admin-nav');
-        if (!usuarioActual) {
-            navName.innerText = "Invitado"; navProg.innerText = "0";
-            btnAct.innerText = "🔑"; btnAdm.style.display = "none";
-        } else {
-            navName.innerText = usuarioActual; btnAct.innerText = "Salir";
-            btnAdm.style.display = (usuarioActual === ADMIN_USER) ? "block" : "none";
-            let usuarios = JSON.parse(localStorage.getItem('chino_users') || "{}");
-            navProg.innerText = (usuarioActual === ADMIN_USER) ? "∞" : (usuarios[usuarioActual]?.progreso || 0);
-            if (usuarioActual === ADMIN_USER) cargarAdminData();
-        }
-    }
-
-    function cargarAdminData() {
-        const list = document.getElementById('admin-user-list');
-        let usuarios = JSON.parse(localStorage.getItem('chino_users') || "{}");
-        list.innerHTML = "";
-        Object.keys(usuarios).forEach(u => {
-            list.innerHTML += `<div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #ddd;">
-                <span><b>${u}</b> (Pts: ${usuarios[u].progreso})</span>
-                <button onclick="eliminarUser('${u}')" style="color:#ff5252; border:none; background:none; cursor:pointer; font-weight:bold;">Eliminar</button>
-            </div>`;
-        });
-    }
-
-    function eliminarUser(u) {
-        if(confirm(`¿Eliminar a ${u}?`)) {
-            let usuarios = JSON.parse(localStorage.getItem('chino_users') || "{}");
-            delete usuarios[u];
-            localStorage.setItem('chino_users', JSON.stringify(usuarios));
-            cargarAdminData();
-        }
-    }
-
-    function exportarUsuarios() {
-        const data = localStorage.getItem('chino_users');
-        const blob = new Blob([data], {type: 'application/json'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'usuarios_backup.json'; a.click();
-    }
-
-    function cambiarVista(id) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('navbar-session').style.display = (id === 'view-game' || id === 'view-flashcards') ? 'none' : 'flex';
-    }
-
-    function irAlMenu() {
-    limpiarLogin();
-
-    // 🔥 cerrar modales SIEMPRE
+function irAlMenu() {
     document.getElementById('modal-fin').style.display = 'none';
     document.getElementById('modal-limite').style.display = 'none';
-
     cambiarVista('view-menu');
 }
 
-    async function cargarDiccionario() {
-        try { const r = await fetch('data/diccionario.json'); diccionario = await r.json(); } catch(e) { 
-    console.error(e);
-    alert("Error cargando datos.");
-}
-    }
+function cerrarModalSeleccion() { document.getElementById('modal-limite').style.display = 'none'; }
 
 async function empezarJuego(file) {
-    // 1. Ocultamos el selector de unidad (porque aquí la unidad ya viene fijada por el archivo)
-    document.getElementById('selector-unidad-container').style.display = 'none';
-    document.getElementById('modal-titulo').innerText = "¿Cuántas frases practicar?";
-
-    // 2. RESETEAR BOTONES DEL MODAL (Ahora son 4 botones: índice 0, 1, 2 y 3)
-    const botones = document.querySelectorAll('#modal-limite .btn-action');
-    botones[0].onclick = () => prepararMazo(5);
-    botones[1].onclick = () => prepararMazo(15);
-    botones[2].onclick = () => prepararMazo(30); // El nuevo botón de 30
-    botones[3].onclick = () => prepararMazo(0);  // El botón de "Todo"
-
+    categoriaActual = 'unidad';
     try {
         const r = await fetch(`data/${file}`);
         frasesCompletas = await r.json();
-        cambiarVista('view-game');
+        document.getElementById('selector-unidad-container').style.display = 'none';
         document.getElementById('modal-limite').style.display = 'flex';
-    } catch(e) { 
-        console.error(e);
-        alert("Error cargando datos de la unidad.");
-    }
+    } catch(e) { alert("Error cargando unidad"); }
+}
+
+async function entrenarCategoria(cat) {
+    categoriaActual = cat;
+    try {
+        const r = await fetch('data/diccionario.json');
+        let datos = await r.json();
+        if (cat !== 'all') {
+            datos = datos.filter(i => i.cat === cat);
+            document.getElementById('selector-unidad-container').style.display = 'none';
+        } else {
+            document.getElementById('selector-unidad-container').style.display = 'block';
+        }
+        flashcardsCompletas = datos;
+        document.getElementById('modal-limite').style.display = 'flex';
+    } catch(e) { console.error(e); }
+}
+
+function iniciarSeleccion(cant) {
+    document.getElementById('modal-limite').style.display = 'none';
+    if (categoriaActual === 'unidad') prepararMazo(cant);
+    else prepararMazoFlash(cant);
 }
 
 function prepararMazo(cant) {
-    cantidadElegida = cant; // Guardamos si eligió 5, 15 o todas (0)
-    
     let temp = [...frasesCompletas].sort(() => Math.random() - 0.5);
     frases = (cant > 0) ? temp.slice(0, cant) : temp;
-
-    idx = 0;
-    document.getElementById('barra-progreso').style.width = "0%";
-    document.getElementById('modal-limite').style.display = 'none';
-    cargarFrase();
+    idx = 0; cambiarVista('view-game'); cargarFrase();
 }
 
 function cargarFrase() {
-    if (!frases.length) {
-        alert("No hay datos disponibles.");
-        irAlMenu();
-        return;
-    }
-
-    // Mostramos el carácter y el pinyin (oculto)
-    document.getElementById('objetivo').innerText = frases[idx].h;
-    document.getElementById('pinyin').innerText = frases[idx].p;
+    const item = frases[idx];
+    document.getElementById('objetivo').innerText = item.h;
+    document.getElementById('pinyin').innerText = item.p;
     document.getElementById('pinyin').style.visibility = 'hidden';
-    
-    // Limpiamos el input y damos foco
-    document.getElementById('input').value = ""; 
-    document.getElementById('input').focus();
-
-    // Calculamos la barra basándonos en el progreso actual
-    const porcentaje = (idx / frases.length) * 100;
-    document.getElementById('barra-progreso').style.width = porcentaje + "%";
+    document.getElementById('input').value = ""; document.getElementById('input').focus();
+    document.getElementById('barra-progreso').style.width = (idx / frases.length * 100) + "%";
 }
-
-const felicitaciones = ["¡Excelente!", "¡Muy bien!", "¡Genial!", "¡Perfecto!", "¡Lo lograste!", "¡Sigue así!"];
 
 document.getElementById('input').oninput = (e) => {
     if (e.target.value.trim() === frases[idx].h) {
-        
-        // Forzamos el 100% visual al acertar la última
-        const porcentajeAcierto = ((idx + 1) / frases.length) * 100;
-        document.getElementById('barra-progreso').style.width = porcentajeAcierto + "%";
-
-        const feedback = document.getElementById('feedback-msg');
-        feedback.innerText = felicitaciones[Math.floor(Math.random() * felicitaciones.length)];
-        feedback.classList.add('show');
-        
-        setTimeout(() => {
-            feedback.classList.remove('show');
-            idx++;
-            
-            if (idx >= frases.length) { 
-                guardarProgreso();
-                document.getElementById('modal-fin').style.display = 'flex'; 
-            } else { 
-                cargarFrase(); 
-            }
-        }, 800);
+        idx++;
+        if (idx >= frases.length) document.getElementById('modal-fin').style.display = 'flex';
+        else cargarFrase();
     }
 };
 
-    function guardarProgreso() {
-        if (!usuarioActual || usuarioActual === ADMIN_USER) return;
-        let usuarios = JSON.parse(localStorage.getItem('chino_users') || "{}");
-        if (usuarios[usuarioActual]) {
-            usuarios[usuarioActual].progreso++;
-            localStorage.setItem('chino_users', JSON.stringify(usuarios));
-            actualizarInterfazUsuario();
-        }
-    }
-
-let flashcardsCompletas = []; // Nueva variable global necesaria
-
-async function empezarFlashcards(file) {
-    // 1. Mostramos el selector de unidades (porque en Flashcards sí queremos filtrar)
-    document.getElementById('selector-unidad-container').style.display = 'block';
-    document.getElementById('modal-titulo').innerText = "¿Qué unidades repasar?";
-
-    // 2. Configuramos los 4 botones del modal para usar 'prepararMazoFlash'
-    const botones = document.querySelectorAll('#modal-limite .btn-action');
-    botones[0].onclick = () => prepararMazoFlash(5);
-    botones[1].onclick = () => prepararMazoFlash(15);
-    botones[2].onclick = () => prepararMazoFlash(30); // Nuevo botón
-    botones[3].onclick = () => prepararMazoFlash(0);  // Botón "Todo"
-
-    try {
-        const r = await fetch(`data/${file}`);
-        flashcardsCompletas = await r.json(); 
-        
-        cambiarVista('view-flashcards');
-        document.getElementById('modal-limite').style.display = 'flex';
-    } catch(e) { 
-        console.error(e);
-        alert("Error cargando el diccionario.");
-    }
-}
 function prepararMazoFlash(cant) {
-    // 1. Miramos qué unidad se seleccionó en el modal
-    const unidadElegida = document.getElementById('flash-unidad-select').value;
-    
-    // 2. FILTRAR: Creamos una base que solo tenga las palabras de esa unidad
-    let baseFiltrada = [];
-    
-    if (unidadElegida === 'all') {
-        // Si eligió "Todo", usamos el diccionario completo
-        baseFiltrada = [...flashcardsCompletas];
-    } else {
-        // Si eligió una unidad (1, 2, etc.), filtramos por el campo "u"
-        baseFiltrada = flashcardsCompletas.filter(item => item.u == unidadElegida);
-    }
-
-    // 3. Verificamos si hay palabras (por si acaso el JSON está vacío o mal etiquetado)
-    if (baseFiltrada.length === 0) {
-        alert("No hay palabras para la Unidad " + unidadElegida + " en el diccionario.");
-        return;
-    }
-
-    // 4. MEZCLAR: Ahora sí, mezclamos solo lo que pasó el filtro
-    let temp = baseFiltrada.sort(() => Math.random() - 0.5);
-    
-    // 5. CORTAR: Elegimos la cantidad (5, 15, 30 o todas)
-    if (cant === 0) {
-        flashcards = temp; 
-    } else {
-        flashcards = temp.slice(0, cant);
-    }
-
-    flashIdx = 0;
-    document.getElementById('modal-limite').style.display = 'none';
+    const u = document.getElementById('flash-unidad-select').value;
+    let base = [...flashcardsCompletas];
+    if (categoriaActual === 'all' && u !== 'all') base = base.filter(i => i.u == u);
+    flashcards = base.sort(() => Math.random() - 0.5);
+    if (cant > 0) flashcards = flashcards.slice(0, cant);
+    flashIdx = 0; 
+    buenas = 0; 
+    malas = 0; 
+    pistaUsada = false; 
+    cambiarVista('view-flashcards'); 
     cargarFlashContenido();
 }
 
-    function cargarFlashContenido() {
-        const item = flashcards[flashIdx];
-        bloqueado = false;
-        document.getElementById('flash-card-obj').classList.remove('flipped');
+function cargarFlashContenido() {
+    const item = flashcards[flashIdx];
+    const card = document.getElementById('flash-card-obj');
+    bloqueado = true;
+    pistaUsada = false;
+    card.classList.remove('flipped');
+    setTimeout(() => {
         document.getElementById('flash-pregunta').innerText = item.h;
         document.getElementById('flash-respuesta').innerText = item.p;
         document.getElementById('flash-significado-back').innerText = item.s || "";
-        document.getElementById('flash-status').innerText = `Palabra ${flashIdx + 1} de ${flashcards.length}`;
+        document.getElementById('flash-status').innerText = `✅ ${buenas} | ❌ ${malas} — (${flashIdx + 1}/${flashcards.length})`;        
         document.getElementById('flash-input').value = "";
-        setTimeout(() => document.getElementById('flash-input').focus(), 300);
-    }
-
-    document.getElementById('flash-input').oninput = (e) => {
-        if (bloqueado) return;
-        if (e.target.value.trim() === flashcards[flashIdx].h) {
-            bloqueado = true;
-            const card = document.getElementById('flash-card-obj');
-            card.classList.add('flipped');
-            setTimeout(() => {
-                flashIdx++;
-                if (flashIdx >= flashcards.length) {
-                    guardarProgreso(); document.getElementById('modal-fin').style.display = 'flex';
-                } else {
-                    const preg = document.getElementById('flash-pregunta');
-                    const resp = document.getElementById('flash-respuesta');
-                    const sig = document.getElementById('flash-significado-back');
-                    preg.classList.add('contenido-oculto');
-                    resp.classList.add('contenido-oculto');
-                    sig.classList.add('contenido-oculto');
-                    card.classList.remove('flipped');
-                    setTimeout(() => {
-                        const prox = flashcards[flashIdx];
-                        preg.innerText = prox.h; resp.innerText = prox.p; sig.innerText = prox.s || "";
-                        document.getElementById('flash-status').innerText = `Palabra ${flashIdx + 1} de ${flashcards.length}`;
-                        document.getElementById('flash-input').value = "";
-                        document.getElementById('flash-input').focus();
-                        preg.classList.remove('contenido-oculto');
-                        resp.classList.remove('contenido-oculto');
-                        sig.classList.remove('contenido-oculto');
-                        bloqueado = false;
-                    }, 600);
-                }
-            }, 1200); 
-        }
-    };
-
-    function mostrarPinyin() {
-    const pinyin = document.getElementById('pinyin');
-    // Si está oculto, lo mostramos. Si está visible, lo ocultamos.
-    if (pinyin.style.visibility === 'hidden' || pinyin.style.visibility === '') {
-        pinyin.style.visibility = 'visible';
-    } else {
-        pinyin.style.visibility = 'hidden';
-    }
+        bloqueado = false;
+        document.getElementById('flash-input').focus();
+    }, 300);
 }
-    function toggleDict() { document.getElementById('dict-panel').classList.toggle('open'); }
-    function buscar() {
-        const q = document.getElementById('dict-input').value.toLowerCase();
-        const res = document.getElementById('dict-res');
-        res.innerHTML = "";
-        diccionario.filter(i => i.h.includes(q) || (i.p || "").toLowerCase().includes(q)).forEach(i => {
-            res.innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee;"><b>${i.h}</b> (${i.p})<br><small>${i.s || ''}</small></div>`;
-        });
-    }
 
-    function toggleDarkMode() {
-        const body = document.body;
-        const btn = document.getElementById('theme-icon');
-        body.classList.toggle('dark-mode');
-        if (body.classList.contains('dark-mode')) {
-            btn.innerText = "☀️"; localStorage.setItem('theme', 'dark');
+document.getElementById('flash-input').oninput = (e) => {
+    if (bloqueado) return;
+
+    if (e.target.value.trim() === flashcards[flashIdx].h) {
+        bloqueado = true;
+        if (pistaUsada) {
+            malas++;
         } else {
-            btn.innerText = "🌙"; localStorage.setItem('theme', 'light');
+            buenas++;
+        }
+        document.getElementById('flash-card-obj').classList.add('flipped');
+        setTimeout(() => {
+            flashIdx++;
+            if (flashIdx >= flashcards.length) {
+                finalizarSesionFlash(); 
+            } else {
+                cargarFlashContenido();
+            }
+        }, 1200);
+    }
+};
+
+function mostrarPinyin() {
+    const p = document.getElementById('pinyin');
+    p.style.visibility = (p.style.visibility === 'hidden') ? 'visible' : 'hidden';
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    document.getElementById('theme-icon').innerText = document.body.classList.contains('dark-mode') ? "☀️" : "🌙";
+}
+
+window.onload = () => {
+    // Ocultar modales al iniciar
+    document.getElementById('modal-fin').style.display = 'none';
+    document.getElementById('modal-limite').style.display = 'none';
+    document.getElementById('modal-usuario').style.display = 'none';
+
+    // Actualizar interfaz si hay usuario
+    if (usuarioActual) {
+        actualizarInterfazUsuario();
+    }
+
+    // Flashcard: click para girar
+    // Flashcard: click para girar con auto-retorno
+document.getElementById('flash-card-obj').onclick = () => {
+    const card = document.getElementById('flash-card-obj');
+    if(!bloqueado) {
+        card.classList.toggle('flipped');
+        if(!pistaUsada) pistaUsada = true;
+
+        // Si el usuario la puso en la cara de atrás (pinyin/significado)
+        if (card.classList.contains('flipped')) {
+            // Espera 2 segundos y la devuelve al frente (Hanzi)
+            setTimeout(() => {
+                // Solo la devuelve si sigue volteada (evita conflictos si el usuario hizo clic rápido)
+                if (card.classList.contains('flipped') && !bloqueado) {
+                    card.classList.remove('flipped');
+                }
+            }, 1500); // 2000 milisegundos = 2 segundos
         }
     }
+};
 
-    window.addEventListener('load', () => {
-    cargarDiccionario();
-    actualizarInterfazUsuario();
-    configurarEnter();
+    // Cerrar modal-limite al click fuera
+    const modalLimite = document.getElementById('modal-limite');
+    modalLimite.addEventListener('click', (e) => {
+        if (e.target === modalLimite) {
+            modalLimite.style.display = 'none';
+        }
+    });
+};
+function finalizarSesionFlash() {
+    if (usuarioActual) {
+        let listaUsuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+        const uIdx = listaUsuarios.findIndex(u => u.username === usuarioActual.username);
 
-    document.getElementById('flash-card-obj').onclick = () => {
-        if(!bloqueado) document.getElementById('flash-card-obj').classList.toggle('flipped');
-    };
-
-    if (localStorage.getItem('theme') === 'dark') {
-        document.body.classList.add('dark-mode');
-        document.getElementById('theme-icon').innerText = "☀️";
+        if (uIdx !== -1) {
+            listaUsuarios[uIdx].progreso = (listaUsuarios[uIdx].progreso || 0) + buenas;
+            localStorage.setItem('usuarios', JSON.stringify(listaUsuarios));
+            usuarioActual.progreso = listaUsuarios[uIdx].progreso;
+            document.getElementById('nav-progress').innerText = usuarioActual.progreso;
+        }
     }
-});
-    function cerrarModalSeleccion() {
-    // Cerramos el modal
-    document.getElementById('modal-limite').style.display = 'none';
-    // Volvemos al menú principal
-    irAlMenu();
-}
-
-// EXTRA: Cerrar al hacer clic fuera del cuadro blanco
-window.onclick = function(event) {
-    const modal = document.getElementById('modal-limite');
-    if (event.target == modal) {
-        cerrarModalSeleccion();
-    }
-}
-function limpiarLogin() {
-    document.getElementById('login-user').value = "";
-    document.getElementById('login-pass').value = "";
-    document.getElementById('login-pass-repeat').value = "";
-}
-function repetirSesion() {
-    document.getElementById('modal-fin').style.display = 'none';
+    const mensaje = usuarioActual 
+        ? `¡Bien hecho, ${usuarioActual.username}! 🎉\nSumaste ${buenas} puntos a tu perfil.` 
+        : `¡Sesión terminada! 🎉\nResultado: ✅ ${buenas} | ❌ ${malas}`;
     
-    // Si estamos en juego normal
-    if (document.getElementById('view-game').classList.contains('active')) {
-        prepararMazo(cantidadElegida); 
-    } 
-    // Si estamos en flashcards
-    else {
-        prepararMazoFlash(cantidadElegida);
+    document.querySelector('#modal-fin h2').innerText = mensaje;
+    document.getElementById('modal-fin').style.display = 'flex';
+}
+function abrirSeccionUsuario() {
+    document.getElementById('modal-usuario').style.display = 'flex';
+    if (usuarioActual) {
+        document.getElementById('seccion-login').style.display = 'none';
+        document.getElementById('seccion-registro').style.display = 'none';
+        document.getElementById('seccion-perfil').style.display = 'block';
+        document.getElementById('perfil-nombre').innerText = usuarioActual.username;
+        document.getElementById('perfil-puntos').innerText = usuarioActual.progreso || 0;
+    } else {
+        mostrarLogin();
+    }
+}
+
+function cerrarModalUsuario() { document.getElementById('modal-usuario').style.display = 'none'; }
+function mostrarRegistro() { 
+    document.getElementById('seccion-login').style.display = 'none'; 
+    document.getElementById('seccion-registro').style.display = 'block'; 
+}
+function mostrarLogin() { 
+    document.getElementById('seccion-login').style.display = 'block'; 
+    document.getElementById('seccion-registro').style.display = 'none'; 
+    document.getElementById('seccion-perfil').style.display = 'none';
+}
+
+function registrarUsuario() {
+    const user = document.getElementById('reg-user').value.trim();
+    if (!user) return alert("Escribe un nombre");
+    
+    let lista = JSON.parse(localStorage.getItem('usuarios')) || [];
+    if (lista.some(u => u.username === user)) return alert("El usuario ya existe");
+
+    const nuevo = { username: user, progreso: 0 };
+    lista.push(nuevo);
+    localStorage.setItem('usuarios', JSON.stringify(lista));
+    alert("¡Registrado! Ahora inicia sesión.");
+    mostrarLogin();
+}
+
+function intentarLogin() {
+    const user = document.getElementById('login-user').value.trim();
+    let lista = JSON.parse(localStorage.getItem('usuarios')) || [];
+    const encontrado = lista.find(u => u.username === user);
+
+    if (encontrado) {
+        usuarioActual = encontrado;
+        localStorage.setItem('usuarioSesion', JSON.stringify(usuarioActual));
+        cerrarModalUsuario();
+        actualizarInterfazUsuario();
+    } else {
+        alert("Usuario no encontrado");
+    }
+}
+function cerrarSesion() {
+    usuarioActual = null;
+    localStorage.removeItem('usuarioSesion');
+    actualizarInterfazUsuario();
+    cerrarModalUsuario();
+}
+function actualizarInterfazUsuario() {
+    if (usuarioActual) {
+        document.getElementById('nav-username').innerText = usuarioActual.username;
+        document.getElementById('nav-progress').innerText = usuarioActual.progreso || 0;
+    } else {
+        document.getElementById('nav-username').innerText = "Invitado";
+        document.getElementById('nav-progress').innerText = "0";
     }
 }
 </script>
